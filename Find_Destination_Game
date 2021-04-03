@@ -1,0 +1,163 @@
+#include<iostream>
+#include<cstdlib>
+#include<ctime>
+#define SIZE 10
+
+using namespace std;
+
+struct Player {
+	int y;
+	int x;
+};
+
+
+int main(void) {
+	srand(time(NULL));
+
+	int gameField[SIZE][SIZE] = { 0 };
+
+	Player p1;
+
+	p1.y = SIZE - 1;
+	p1.x = rand() % 10;
+
+	gameField[p1.y][p1.x] = 2;	//게임 플레이어의 위치를 2로 나타냄
+
+	int destY;
+	int destX;
+
+	bool FieldMakeSuccess = false;
+
+	//맵 생성
+	destY = p1.y;
+	destX = p1.x;
+	while (!FieldMakeSuccess) {
+
+		int mapMakeDirection = rand() % 4;
+		if (mapMakeDirection == 0) {		//맵 상의 길을 왼쪽으로 한칸 뚫는다
+			if ((destX - 1) >= 0) {
+				if (gameField[destY][destX-1]==2 || gameField[destY][destX-1] == 1) {
+					continue;
+				}
+				else {
+					destX -= 1;
+					gameField[destY][destX] = 1;
+				}
+			}
+		}
+		else if (mapMakeDirection == 1) {		//맵 상의 길을 위쪽으로 한칸 뚫는다
+			if ((destY - 1) >= 0) {
+				if( gameField[destY-1][destX]==2 || gameField[destY-1][destX] == 1){
+					continue;
+				}
+				else {
+					destY -= 1;
+					gameField[destY][destX] = 1;
+				}
+			}
+		}
+		else if (mapMakeDirection == 2) {		//맵 상의 길을 오른쪽으로 한칸 뚫는다
+			if ((destX + 1) <SIZE) {
+				if (gameField[destY][destX+1]==2 || gameField[destY][destX+1] == 1) {
+					continue;
+				}
+				else {
+					destX += 1;
+					gameField[destY][destX] = 1;
+				}
+			}
+		}
+		else if (mapMakeDirection == 3) {		//맵 상의 길을 아래쪽으로 한칸 뚫는다
+			if ((destY + 1) <SIZE) {
+				if (gameField[destY + 1][destX] == 2 || gameField[destY + 1][destX] == 1) {
+					continue;
+				}
+				else {
+					destY += 1;
+					gameField[destY][destX] = 1;
+				}
+			}
+		}
+
+		if (destY == 0) {				//목적지에 도착하면 맵 그리기 완성
+			FieldMakeSuccess = true;
+		}
+	}
+
+
+	//맵의 첫 출력
+	for (int i = 0; i < SIZE; i++) {
+		for (int j = 0; j < SIZE; j++) {
+			if (gameField[i][j] == 0) {			//벽
+				cout << "■";
+			}
+			else if (gameField[i][j]==2) {		//게임 플레이어
+				cout << "㉾";
+			}
+			else if (gameField[i][j]==3) {	//목적지
+				cout << "☆";
+			}
+			else if (gameField[i][j] == 1) {		//길
+				cout << "  ";
+			}
+		}
+		cout << endl;
+	}
+
+	//게임 실행
+	bool gameSuccess = false;
+	while (!gameSuccess) {
+		char direction;
+
+		cin >> direction;
+
+		if (direction == 'a' || direction == 'A') {							//좌 방향 키
+			if ((p1.x - 1) >= 0 && gameField[p1.y][p1.x-1] == 1) {
+				p1.x -= 1;
+			}
+		}
+		else if (direction == 'w' || direction == 'W') {					//위 방향 키
+			if ((p1.y - 1) >= 0 && gameField[p1.y-1][p1.x] == 1) {
+				p1.y -= 1;
+			}
+		}
+		else if (direction == 'd' || direction == 'D') {					//우 방향 키
+			if ((p1.x + 1) <= (SIZE-1) && gameField[p1.y][p1.x+1] == 1) {
+				p1.x += 1;
+			}
+		}
+		else if (direction == 's' || direction == 'S') {					//아래 방향 키
+			if ((p1.y + 1) <= (SIZE-1) && gameField[p1.y+1][p1.x] == 1){
+				p1.y += 1;
+			}
+		}
+
+
+		//맵 출력
+		for (int i = 0; i < SIZE; i++) {
+			for (int j = 0; j < SIZE; j++) {
+				if (gameField[i][j] == 0) {		//벽
+					cout << "■";
+				}
+				else if (gameField[i][j]==2) {		//게임 플레이어
+					cout << "♧";
+				}
+				else if (gameField[i][j]==3) {		//목적지
+					cout << "☆";
+				}
+				else if (gameField[i][j] == 1) {			//길
+					cout << "  ";
+				}
+			}
+			cout << endl;
+		}
+
+		if (p1.y == destY && p1.x == destX) {
+			gameSuccess = true;
+		}
+	}
+
+	cout << "게임 종료" << endl;
+
+	return 0;
+}
